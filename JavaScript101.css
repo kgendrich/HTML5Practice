@@ -1,0 +1,14 @@
+<style type = "text/css">
+	table {
+		border = 1
+		border-style: solid;
+		background-color: red
+	}
+	th,td {
+		border-style: dotted;
+		border-color: blue;
+		padding: 10px;
+	}
+</style>
+	
+	

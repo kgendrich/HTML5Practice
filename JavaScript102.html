@@ -1,0 +1,78 @@
+<!-- JavaScript102.html : Playing with the dom and Javascript -->
+<!doctype = html>
+<html lang="en">
+	<head>
+		<script> 
+		var tempByHour = new Array();
+		function myArray() {
+			console.log("Array Called");
+			tempByHour[0] = 59.2;
+			tempByHour[1] = 60.1;
+			tempByHour[2] = 63;
+			tempByHour[3] = 65;
+			tempByHour[4] = 62;
+			
+		}
+		
+		function Temperature(timeIndex) {
+			console.log("Temp called with timeINdex of : " + timeIndex);
+			if (timeIndex <= 3) {
+			   return(tempByHour[timeIndex]);
+			}
+			else { 
+			   return("-400 Kelvin"); 
+			}
+		}
+		
+		function showTemps() {
+		for (var i=0; i<5; i++) {
+			var id = "temp" + i;
+			var li = document.getElementById(id);
+			console.log("ShowTemp: Id: " + id + " ShowTemp - li: " + li.innerHTML);
+			if (i == 0) { 
+			   li.innerHTML = "The temperature at noon was " + Temperature(i); 
+			   } 
+			   else 
+			   { 
+					li.innerHTML = "The Temp at " + i + " was " + Temperature(i); 
+				}
+		    }
+		}
+		
+		
+		 
+		function init() {
+			var planet = document.getElementById("greenplanet");
+			console.log("Before: " + planet.innerHTML);
+			setTimeout(function() { 
+			    <!-- blocking wait for 2000 ms (1 sec) -->
+				planet.innerHTML = "Red Alert: hit by Phase Fire! Planet Temperature is: " + Temperature(1000);
+				console.log("After: " + planet.innerHTML);
+			}, 2000);		
+			myArray();
+			var message = "The temperature at 5, was: " + Temperature(5);
+			planet.innerHTML = message;
+			showTemps();
+		}
+		
+		window.onload = init;
+		
+		</script>
+	</head>
+	<body>
+	<h1>Greedn Planet</h1>
+	<p id="greenplanet">All is well</p>
+	<h1>Red Planet</h1>
+	<p id="redplanet">Nothing to Report</p>
+	<h2>Blue Planet</h2>
+	<p id="blueplanet">All Systems AOK</p>
+	<h1> Temperatures </h1>
+	<ul>
+		<li id="temp0">0</li>
+		<li id="temp1">1</li>
+		<li id="temp2">2</li>
+		<li id="temp3">3</li>
+		<li id="temp4">4</li>
+	</ul>
+	</body>
+<html>
