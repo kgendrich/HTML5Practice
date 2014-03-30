@@ -11,10 +11,10 @@ div#location, div#distance {
 	padding: 5px;
 }
 
-div#map {
+div#map-canvas {
 	margin: 5px;
-	width: 800px;
-	height: 1000px;
+	width: 600px;
+	height: 600px;
 	border: 1px solid black;
 }
 

@@ -1,16 +1,18 @@
 window.onload=getMyLocation;
 
 var gmap;
+var options = { enableHighAccuracy:true, timeout:1000, maximumAge:10000 };
 
 function showMap(coords){
     /* alert ("In show Map"); */
+	
     var googleLatAndLong = new google.maps.LatLng(coords.latitude,coords.longitude);
     var mapOptions = {
         zoom:15,
         center: googleLatAndLong
         /* mapTypeId: google.maps.MapTypeId.ROADMAP */
     };
-    var mapDiv = document.getElementById("map");
+    var mapDiv = document.getElementById("map-canvas");
     /* alert ("Draw Map"); */
     gmap = new google.maps.Map(mapDiv, mapOptions);
 	var title = "You are Here";
@@ -19,23 +21,43 @@ function showMap(coords){
 
 	var content = "You are at: " + showlat + " , " + showlong;
 	addMarker(gmap, googleLatAndLong, title, content);
-	var googleKenLatAndLong = new google.maps.LatLng(kensCoords.latitude,kensCoords.longitude);
-	ThaiAddress(gmap); 
-
-	/* addMarker(gmap, googleKenLatAndLong, "Kens House"); */
+	/* ThaiAddress(gmap); */
     /* alert ("out show Map"); */
 }
 
 function getMyLocation() {
 	if (navigator.geolocation) {
 		/* alert ("Has Geolocation Support"); */
-		navigator.geolocation.getCurrentPosition(displayLocation, displayError);
+		navigator.geolocation.getCurrentPosition(displayLocation, displayError,options); 
+		var watchButton = document.getElementById("watch");
+		watchButton.onclick = watchLocation;
+		var clearWatchButton = document.getElementById("clearWatch");
+		clearWatchButton.onclick = clearWatch;
 		/* detectBrowser(); */
 	} else {
 			alert ("Sorry, your device has No GeoLocation support, I can't map you");
 		   }
 }
 
+function scrollMapToPosition(coords) {
+	var latitude = coords.latitude;
+	var longitude = corrds.longitude;
+	var latlong = new google.maps.LatLong(latitude,longitude);
+	gmap.panTo(latlong);
+	addMarker (gmap, latlong, "New Location", "moved to: " + latitude + ", " + longitude);
+}
+
+var watchId = null;
+
+function watchLocation() {
+	watchId = navigator.geolocation.watchPosition(displayLocation, displayError);
+}
+
+function clearWatch() {
+	if (watchId) {
+		navigator.geolocation.clearWatch(watchId);
+	}
+}
 
 function detectBrowser() {
   var useragent = navigator.userAgent;
@@ -69,10 +91,6 @@ var ourCoords = {
     longitude: -122.52099
 };
 
-var kensCoords = {
-	latitude: 35.8904798,
-	longitude: -86.3720475
-};
 
 var ThaiCoords = {
 	latitude: 30.8904798,
@@ -90,19 +108,6 @@ function computeDistance(startCoords, destCoords) {
  return distance;
 }
 
-function displayLocation_debug(position) {
-    alert ("Display Location");
-    var latitude = position.coords.latitude;
-    var longitude = position.coords.longitude;
-    alert ("lat: " + latitude + " long: " + longitude);
-    var div = document.getElementById("location");
-    div.innterHTML = "Lat: " + latitude + ", long: " + longitude;
-    var km = computeDistance(position.coords, kensCoords);
-    var miles = km * 0.621371192;
-    var distance = document.getElementById("distance");
-    distance.innerHTML = "Distance: " + km + " km from the WickedlySmart HQ / Miles: " + miles;
-}
-
 function degreesToRadians(degrees) {
     var radians = (degrees * Math.PI)/180;
     return radians;
@@ -116,12 +121,18 @@ function displayLocation(position) {
     var location = document.getElementById("location");
     location.innerHTML = "Lat: " + latitude + ", long: " + longitude;
     /* alert ("Call show Map"); */
-    showMap(position.coords);
-	var km = computeDistance(position.coords, ThaiCoords);
+	if (gmap == null) {
+		showMap(position.coords);
+	} else {
+		scrollMapToPosition(position.coords);
+	}
+	/*
+ 	var km = computeDistance(position.coords, ThaiCoords);
     var miles = km * 0.621371192;
 	miles = Math.round((miles + 0.00001) * 100) / 100;
     var distance = document.getElementById("distance");
     distance.innerHTML = "You are " + miles + " Miles from Thai Spice";
+	*/
 
 }
 
@@ -162,4 +173,18 @@ function ThaiAddress(gmap) {
       alert('Geocode was not successful for the following reason: ' + status);
     }
   });
+}
+
+
+function displayLocation_debug(position) {
+    alert ("Display Location");
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;
+    alert ("lat: " + latitude + " long: " + longitude);
+    var div = document.getElementById("location");
+    div.innterHTML = "Lat: " + latitude + ", long: " + longitude;
+    var km = computeDistance(position.coords, kensCoords);
+    var miles = km * 0.621371192;
+    var distance = document.getElementById("distance");
+    distance.innerHTML = "Distance: " + km + " km from the WickedlySmart HQ / Miles: " + miles;
 }
